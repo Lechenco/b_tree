@@ -15,7 +15,15 @@ type Data struct {
 func main() {
 	treeService := services.BTreeService[Data]{}
 	treeService.InitService(models.BTreeConfig{
-		MaxKeysPerNode: 1,
+		MaxElementsPerNode: 2,
+	})
+
+	treeService.Add(models.Element[Data]{
+		Key: 10,
+		Data: Data{
+			Name: "teste",
+			Job:  "ifood",
+		},
 	})
 
 	fmt.Printf("service: %v\n", treeService)

@@ -1,7 +1,7 @@
 package models
 
 type DataStore[T any] interface {
-	Add(T) (*Node[T], error)
-	Get(int) (*Node[T], error)
-	Remove(Node[T]) error
+	Add(Element[T]) (*Element[T], error)
+	Get(int) (*Element[T], error)
+	Remove(Element[T]) error
 }

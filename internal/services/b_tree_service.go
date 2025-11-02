@@ -12,14 +12,18 @@ func (s *BTreeService[T]) InitService(config models.BTreeConfig) {
 	}
 }
 
-func (s *BTreeService[T]) Add(data T) (*models.Node[T], error) {
+func (s *BTreeService[T]) Add(element models.Element[T]) (*models.Element[T], error) {
+	node := s.tree.FindNodeToAddElement(element)
+
+	node.AddElement(element)
+
 	return nil, nil
 }
 
-func (s *BTreeService[T]) Get(key int) (*models.Node[T], error) {
+func (s *BTreeService[T]) Get(key int) (*models.Element[T], error) {
 	return nil, nil
 }
 
-func (s *BTreeService[T]) Remove(node models.Node[T]) error {
+func (s *BTreeService[T]) Remove(node models.Element[T]) error {
 	return nil
 }
