@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Lechenco/b_tree/internal/models"
+	"github.com/Lechenco/b_tree/internal/services"
 )
 
 type Data struct {
@@ -12,7 +13,10 @@ type Data struct {
 }
 
 func main() {
-	tree := models.NewBTree[Data]()
+	treeService := services.BTreeService[Data]{}
+	treeService.InitService(models.BTreeConfig{
+		MaxKeysPerNode: 1,
+	})
 
-	fmt.Printf("Tree: %v\n", tree)
+	fmt.Printf("service: %v\n", treeService)
 }
