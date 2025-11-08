@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 type BTreeConfig struct {
 	MaxElementsPerNode int
 }
@@ -9,15 +11,25 @@ type BTree[T any] struct {
 	Config BTreeConfig
 }
 
-func (t *BTree[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
-	// find node
+func (t *BTree[T]) FindNodeToAddElement(element Element[T]) error {
 	if t.Root == nil {
-		return t.createRootNode()
+		t.createRootNode()
+		t.Root.AddElement(&element, t.Root)
+
+		return nil
 	}
 
 	// find node to add
 	targetNode := t.Root.FindNodeToAddElement(element)
-	return targetNode
+
+	targetNode.AddElement(&element, t.Root)
+
+	// check for new root
+	if t.Root.Parent != nil {
+		t.Root = t.Root.Parent
+	}
+
+	return nil
 }
 
 func (t *BTree[T]) createRootNode() *Node[T] {
@@ -29,4 +41,11 @@ func (t *BTree[T]) createRootNode() *Node[T] {
 
 func (t *BTree[T]) createNode() Node[T] {
 	return Node[T]{MaxElementsPerNode: t.Config.MaxElementsPerNode}
+}
+
+func (t BTree[T]) String() string {
+	str := "Tree:"
+	nodestr := strings.ReplaceAll(t.Root.String(), "\n", "\n\t")
+
+	return str + nodestr
 }

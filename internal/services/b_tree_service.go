@@ -13,11 +13,9 @@ func (s *BTreeService[T]) InitService(config models.BTreeConfig) {
 }
 
 func (s *BTreeService[T]) Add(element models.Element[T]) (*models.Element[T], error) {
-	node := s.tree.FindNodeToAddElement(element)
+	err := s.tree.FindNodeToAddElement(element)
 
-	node.AddElement(element)
-
-	return nil, nil
+	return &element, err
 }
 
 func (s *BTreeService[T]) Get(key int) (*models.Element[T], error) {
@@ -26,4 +24,8 @@ func (s *BTreeService[T]) Get(key int) (*models.Element[T], error) {
 
 func (s *BTreeService[T]) Remove(node models.Element[T]) error {
 	return nil
+}
+
+func (s BTreeService[T]) String() string {
+	return s.tree.String()
 }
