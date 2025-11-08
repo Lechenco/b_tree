@@ -3,3 +3,6 @@ build-app:
 
 start-app:
 	./build/app
+
+run:
+	go run cmd/app/main.go
