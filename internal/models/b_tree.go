@@ -1,6 +1,8 @@
 package models
 
-import "strings"
+import (
+	"strings"
+)
 
 type BTreeConfig struct {
 	MaxElementsPerNode int
@@ -43,7 +45,7 @@ func (t *BTree[T]) createNode() Node[T] {
 	return Node[T]{MaxElementsPerNode: t.Config.MaxElementsPerNode}
 }
 
-func (t BTree[T]) String() string {
+func (t *BTree[T]) String() string {
 	str := "Tree:"
 	nodestr := strings.ReplaceAll(t.Root.String(), "\n", "\n\t")
 
