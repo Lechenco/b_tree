@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-type Element[T any] struct {
-	Key  int
-	Data T
-}
-
 type Node[T any] struct {
 	Parent             *Node[T]
 	Elements           []*Element[T]
@@ -24,8 +19,7 @@ func (n *Node[T]) AddChild(child *Node[T]) {
 }
 
 func (n *Node[T]) AddElement(element *Element[T], root *Node[T]) *Node[T] {
-	fmt.Println("Adding: ", element)
-	index := n.findIndexElementWithGreaterKey(element.Key)
+	index := n.indexElementFunc(GreaterKeyComparator[T](element.Key))
 
 	if index == -1 {
 		n.Elements = append(n.Elements, element)
@@ -34,10 +28,7 @@ func (n *Node[T]) AddElement(element *Element[T], root *Node[T]) *Node[T] {
 	}
 
 	if n.isOverflowed() {
-		fmt.Println("Split: ", root)
 		n.splitElements(root)
-		fmt.Println("Tree: ", root)
-		fmt.Println("Find Node with: ", element)
 		return root.findRoot().findNode(*element)
 	}
 	return n
@@ -60,7 +51,6 @@ func (n *Node[T]) splitElements(root *Node[T]) {
 }
 
 func (n *Node[T]) addElementToParent(element *Element[T], root *Node[T]) {
-
 	if n.Parent == nil {
 		newRoot := Node[T]{
 			ChildNodes:         []*Node[T]{n},
@@ -68,9 +58,7 @@ func (n *Node[T]) addElementToParent(element *Element[T], root *Node[T]) {
 		}
 		n.Parent = &newRoot
 	}
-	newParent := n.Parent.AddElement(element, root)
-	n.Parent = newParent
-	fmt.Printf("NewParent: %p\n", newParent)
+	n.Parent = n.Parent.AddElement(element, root)
 }
 
 func (n *Node[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
@@ -78,12 +66,7 @@ func (n *Node[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
 		return n
 	}
 
-	nextNodeIndex := n.findIndexElementWithGreaterKey(element.Key)
-	if nextNodeIndex == -1 {
-		return n.ChildNodes[len(n.ChildNodes)-1].FindNodeToAddElement(element)
-	}
-
-	return n.ChildNodes[nextNodeIndex].FindNodeToAddElement(element)
+	return n.nextNode(element).FindNodeToAddElement(element)
 }
 
 func (n *Node[T]) findRoot() *Node[T] {
@@ -95,43 +78,32 @@ func (n *Node[T]) findRoot() *Node[T] {
 }
 
 func (n *Node[T]) findNode(element Element[T]) *Node[T] {
-	index := n.findIndexElementEquals(element.Key)
+	index := n.indexElementFunc(EqualsKeyComparator[T](element.Key))
 
 	if index != -1 {
 		return n
-	}
-
-	if len(n.ChildNodes) == 0 {
+	} else if len(n.ChildNodes) == 0 {
 		return nil
 	}
 
-	nextNodeIndex := n.findIndexElementWithGreaterKey(element.Key)
+	return n.nextNode(element).findNode(element)
+}
+
+func (n *Node[T]) nextNode(element Element[T]) *Node[T] {
+	nextNodeIndex := n.indexElementFunc(GreaterKeyComparator[T](element.Key))
 	if nextNodeIndex == -1 {
-		return n.ChildNodes[len(n.ChildNodes)-1].findNode(element)
+		return n.ChildNodes[len(n.ChildNodes)-1]
 	}
-	return n.ChildNodes[nextNodeIndex].findNode(element)
+
+	return n.ChildNodes[nextNodeIndex]
 }
 
 func (n *Node[T]) isLeaf() bool { return len(n.ChildNodes) == 0 }
 
 func (n *Node[T]) isOverflowed() bool { return len(n.Elements) > n.MaxElementsPerNode }
 
-func (n *Node[T]) findIndexElementWithGreaterKey(key int) int {
-	index := slices.IndexFunc(
-		n.Elements,
-		func(elem *Element[T]) bool { return elem.Key > key },
-	)
-
-	return index
-}
-
-func (n *Node[T]) findIndexElementEquals(key int) int {
-	index := slices.IndexFunc(
-		n.Elements,
-		func(elem *Element[T]) bool { return elem.Key == key },
-	)
-
-	return index
+func (n *Node[T]) indexElementFunc(f func(*Element[T]) bool) int {
+	return slices.IndexFunc(n.Elements, f)
 }
 
 func (n *Node[T]) sliceElementsAndChildsAtLeft(index int) ([]*Element[T], []*Node[T]) {
@@ -161,10 +133,6 @@ func (n *Node[T]) copyNode(elements []*Element[T], childs []*Node[T]) Node[T] {
 		MaxElementsPerNode: n.MaxElementsPerNode,
 		ChildNodes:         childs,
 	}
-}
-
-func (e *Element[T]) String() string {
-	return fmt.Sprintf("{Element: %d}", e.Key)
 }
 
 func (n *Node[T]) String() string {
