@@ -20,17 +20,23 @@ func (t *BTree[T]) AddElement(element Element[T]) error {
 	addElementRecursively(t.Root, element)
 
 	if t.Root.isOverflowed() {
-		previousRoot := t.Root
-		root := t.createRootNode()
-		root.AddChild(previousRoot)
-		splitChildrenNode(root, previousRoot)
+		t.splitTreeRoot()
 	}
+	return nil
+}
+
+func (t *BTree[T]) splitTreeRoot() error {
+	previousRoot := t.Root
+	root := t.createRootNode()
+	root.AddChild(previousRoot)
+	splitChildrenNode(root, previousRoot)
+
 	return nil
 }
 
 func addElementRecursively[T any](node *Node[T], element Element[T]) error {
 	if node.isLeaf() {
-		node.AddElement(&element, nil)
+		node.AddElement(&element)
 		return nil
 	}
 
@@ -56,7 +62,7 @@ func splitChildrenNode[T any](parent, children *Node[T]) {
 	children.Elements = leftElements
 	children.ChildNodes = leftNodes
 
-	parent.AddElement(medianElement, nil)
+	parent.AddElement(medianElement)
 
 	rightNode := children.copyNode(rightElements, rightNodes)
 	parent.AddChild(&rightNode)

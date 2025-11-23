@@ -7,7 +7,6 @@ import (
 )
 
 type Node[T any] struct {
-	Parent             *Node[T]
 	Elements           []*Element[T]
 	ChildNodes         []*Node[T]
 	MaxElementsPerNode int
@@ -25,7 +24,7 @@ func (n *Node[T]) AddChild(child *Node[T]) {
 
 }
 
-func (n *Node[T]) AddElement(element *Element[T], root *Node[T]) *Node[T] {
+func (n *Node[T]) AddElement(element *Element[T]) *Node[T] {
 	index := n.indexElementFunc(GreaterKeyComparator[T](element.Key))
 
 	if index == -1 {
@@ -84,7 +83,6 @@ func (n *Node[T]) sliceElementsAndChildsAtRight(index int) ([]*Element[T], []*No
 
 func (n *Node[T]) copyNode(elements []*Element[T], childs []*Node[T]) Node[T] {
 	return Node[T]{
-		Parent:             n.Parent,
 		Elements:           elements,
 		MaxElementsPerNode: n.MaxElementsPerNode,
 		ChildNodes:         childs,
@@ -92,7 +90,7 @@ func (n *Node[T]) copyNode(elements []*Element[T], childs []*Node[T]) Node[T] {
 }
 
 func (n *Node[T]) String() string {
-	str := fmt.Sprintf("\nNode %p: {Parent: %p [%v]}", n, n.Parent, n.Elements)
+	str := fmt.Sprintf("\nNode %p: [%v]", n, n.Elements)
 
 	var childStr string
 	for _, v := range n.ChildNodes {
