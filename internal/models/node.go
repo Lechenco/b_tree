@@ -14,8 +14,15 @@ type Node[T any] struct {
 }
 
 func (n *Node[T]) AddChild(child *Node[T]) {
-	n.ChildNodes = append(n.ChildNodes, child)
-	child.Parent = n
+	childLastElement := child.Elements[len(child.Elements)-1]
+	index := n.indexElementFunc(GreaterKeyComparator[T](childLastElement.Key))
+
+	if index == -1 {
+		n.ChildNodes = append(n.ChildNodes, child)
+	} else {
+		n.ChildNodes = slices.Insert(n.ChildNodes, index, child)
+	}
+
 }
 
 func (n *Node[T]) AddElement(element *Element[T], root *Node[T]) *Node[T] {
@@ -27,38 +34,7 @@ func (n *Node[T]) AddElement(element *Element[T], root *Node[T]) *Node[T] {
 		n.Elements = slices.Insert(n.Elements, index, element)
 	}
 
-	if n.isOverflowed() {
-		n.splitElements(root)
-		return root.findRoot().findNode(*element)
-	}
 	return n
-}
-
-func (n *Node[T]) splitElements(root *Node[T]) {
-	medianIndex := len(n.Elements) / 2
-	medianElement := n.Elements[medianIndex]
-
-	n.addElementToParent(medianElement, root)
-
-	leftElements, leftNodes := n.sliceElementsAndChildsAtLeft(medianIndex)
-	rightElements, rightNodes := n.sliceElementsAndChildsAtRight(medianIndex)
-
-	n.Elements = leftElements
-	n.ChildNodes = leftNodes
-
-	var rightNode = n.copyNode(rightElements, rightNodes)
-	n.Parent.AddChild(&rightNode)
-}
-
-func (n *Node[T]) addElementToParent(element *Element[T], root *Node[T]) {
-	if n.Parent == nil {
-		newRoot := Node[T]{
-			ChildNodes:         []*Node[T]{n},
-			MaxElementsPerNode: n.MaxElementsPerNode,
-		}
-		n.Parent = &newRoot
-	}
-	n.Parent = n.Parent.AddElement(element, root)
 }
 
 func (n *Node[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
@@ -67,26 +43,6 @@ func (n *Node[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
 	}
 
 	return n.nextNode(element).FindNodeToAddElement(element)
-}
-
-func (n *Node[T]) findRoot() *Node[T] {
-	if n.Parent == nil {
-		return n
-	}
-
-	return n.Parent.findRoot()
-}
-
-func (n *Node[T]) findNode(element Element[T]) *Node[T] {
-	index := n.indexElementFunc(EqualsKeyComparator[T](element.Key))
-
-	if index != -1 {
-		return n
-	} else if len(n.ChildNodes) == 0 {
-		return nil
-	}
-
-	return n.nextNode(element).findNode(element)
 }
 
 func (n *Node[T]) nextNode(element Element[T]) *Node[T] {

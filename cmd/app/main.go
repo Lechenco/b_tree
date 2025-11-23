@@ -74,5 +74,59 @@ func main() {
 		},
 	})
 
+	treeService.Add(models.Element[Data]{
+		Key: 12,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+	treeService.Add(models.Element[Data]{
+		Key: 13,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+	treeService.Add(models.Element[Data]{
+		Key: 14,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+
+	treeService.Add(models.Element[Data]{
+		Key: 8,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+
+	treeService.Add(models.Element[Data]{
+		Key: 10,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+
+	treeService.Add(models.Element[Data]{
+		Key: 11,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+
+	treeService.Add(models.Element[Data]{
+		Key: 9,
+		Data: Data{
+			Name: "teste3",
+			Job:  "99",
+		},
+	})
+
 	fmt.Println("service: ", treeService)
 }

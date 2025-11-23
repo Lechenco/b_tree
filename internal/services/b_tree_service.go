@@ -13,7 +13,7 @@ func (s *BTreeService[T]) InitService(config models.BTreeConfig) {
 }
 
 func (s *BTreeService[T]) Add(element models.Element[T]) (*models.Element[T], error) {
-	err := s.tree.FindNodeToAddElement(element)
+	err := s.tree.AddElement(element)
 
 	return &element, err
 }
