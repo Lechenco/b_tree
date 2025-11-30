@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/Lechenco/b_tree/internal/models"
 	"github.com/Lechenco/b_tree/internal/services"
@@ -12,121 +13,34 @@ type Data struct {
 	Job  string
 }
 
+func generateElement(key int) models.Element[Data] {
+	return models.Element[Data]{
+		Key: key,
+		Data: Data{
+			Name: "teste",
+			Job:  "teste",
+		},
+	}
+}
+
 func main() {
 	treeService := services.BTreeService[Data]{}
+
+	// keysToAdd := []int{1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 8, 10, 11, 9}
+	keysToAdd := []int{}
+	randomKeysToAdd := 1000
+
 	treeService.InitService(models.BTreeConfig{
 		MaxElementsPerNode: 2,
 	})
 
-	treeService.Add(models.Element[Data]{
-		Key: 1,
-		Data: Data{
-			Name: "teste",
-			Job:  "ifood",
-		},
-	})
+	for _, key := range keysToAdd {
+		treeService.Add(generateElement(key))
+	}
 
-	treeService.Add(models.Element[Data]{
-		Key: 2,
-		Data: Data{
-			Name: "teste2",
-			Job:  "ifood2",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 3,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 4,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 5,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 6,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 7,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 12,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-	treeService.Add(models.Element[Data]{
-		Key: 13,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-	treeService.Add(models.Element[Data]{
-		Key: 14,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 8,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 10,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 11,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
-
-	treeService.Add(models.Element[Data]{
-		Key: 9,
-		Data: Data{
-			Name: "teste3",
-			Job:  "99",
-		},
-	})
+	for i := 0; i < randomKeysToAdd; i++ {
+		treeService.Add(generateElement(rand.Intn(10000)))
+	}
 
 	fmt.Println("service: ", treeService)
 }

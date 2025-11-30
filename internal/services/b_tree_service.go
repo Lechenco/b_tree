@@ -1,6 +1,11 @@
 package services
 
-import "github.com/Lechenco/b_tree/internal/models"
+import (
+	"fmt"
+
+	"github.com/Lechenco/b_tree/internal/models"
+	"github.com/Lechenco/b_tree/internal/utils"
+)
 
 type BTreeService[T any] struct {
 	tree models.BTree[T]
@@ -15,6 +20,12 @@ func (s *BTreeService[T]) InitService(config models.BTreeConfig) {
 func (s *BTreeService[T]) Add(element models.Element[T]) (*models.Element[T], error) {
 	err := s.tree.AddElement(element)
 
+	validTree := utils.CheckTree(s.tree)
+	if !validTree {
+		fmt.Println(s.tree)
+		fmt.Println(element)
+		panic("Error adding element to Tree")
+	}
 	return &element, err
 }
 

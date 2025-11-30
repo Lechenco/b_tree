@@ -36,12 +36,16 @@ func (n *Node[T]) AddElement(element *Element[T]) *Node[T] {
 	return n
 }
 
-func (n *Node[T]) FindNodeToAddElement(element Element[T]) *Node[T] {
-	if n.isLeaf() {
+func (n *Node[T]) FindElement(element Element[T]) *Node[T] {
+	index := n.indexElementFunc(EqualsKeyComparator[T](element.Key))
+	if index != -1 {
 		return n
 	}
+	if n.IsLeaf() {
+		return nil
+	}
 
-	return n.nextNode(element).FindNodeToAddElement(element)
+	return n.nextNode(element).FindElement(element)
 }
 
 func (n *Node[T]) nextNode(element Element[T]) *Node[T] {
@@ -53,7 +57,7 @@ func (n *Node[T]) nextNode(element Element[T]) *Node[T] {
 	return n.ChildNodes[nextNodeIndex]
 }
 
-func (n *Node[T]) isLeaf() bool { return len(n.ChildNodes) == 0 }
+func (n *Node[T]) IsLeaf() bool { return len(n.ChildNodes) == 0 }
 
 func (n *Node[T]) isOverflowed() bool { return len(n.Elements) > n.MaxElementsPerNode }
 
