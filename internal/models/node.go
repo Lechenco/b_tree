@@ -48,6 +48,14 @@ func (n *Node[T]) FindElement(element Element[T]) *Node[T] {
 	return n.nextNode(element).FindElement(element)
 }
 
+func (n *Node[T]) GetElement(key int) *Element[T] {
+	index := n.indexElementFunc(EqualsKeyComparator[T](key))
+	if index != -1 {
+		return n.Elements[index]
+	}
+	return nil
+}
+
 func (n *Node[T]) nextNode(element Element[T]) *Node[T] {
 	nextNodeIndex := n.indexElementFunc(GreaterKeyComparator[T](element.Key))
 	if nextNodeIndex == -1 {

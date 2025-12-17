@@ -29,8 +29,12 @@ func (s *BTreeService[T]) Add(element models.Element[T]) (*models.Element[T], er
 	return &element, err
 }
 
-func (s *BTreeService[T]) Get(key int) (*models.Element[T], error) {
+func (s *BTreeService[T]) Update(element models.Element[T]) (*models.Element[T], error) {
 	return nil, nil
+}
+
+func (s *BTreeService[T]) Get(key int) *models.Element[T] {
+	return s.tree.GetElementByKey(key)
 }
 
 func (s *BTreeService[T]) Remove(node models.Element[T]) error {

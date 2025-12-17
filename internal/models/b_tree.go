@@ -32,6 +32,16 @@ func (t *BTree[T]) AddElement(element Element[T]) error {
 	return nil
 }
 
+func (t *BTree[T]) GetElementByKey(key int) *Element[T] {
+	node := t.Root.FindElement(Element[T]{Key: key})
+
+	if node == nil {
+		return nil
+	}
+
+	return node.GetElement(key)
+}
+
 func (t *BTree[T]) UpdateElement(element Element[T]) error {
 	panic("Not Implemented")
 	// find element by key
