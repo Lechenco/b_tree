@@ -23,24 +23,31 @@ func generateElement(key int) models.Element[Data] {
 	}
 }
 
+func addKeys(service *services.BTreeService[Data]) {
+	keysToAdd := []int{1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 8, 10, 11, 9}
+	for _, key := range keysToAdd {
+		service.Add(generateElement(key))
+	}
+}
+
+func addKeysRandom(service *services.BTreeService[Data]) {
+	randomKeysToAdd := 1000
+	for i := 0; i < randomKeysToAdd; i++ {
+		service.Add(generateElement(rand.Intn(10000)))
+	}
+}
+
 func main() {
 	treeService := services.BTreeService[Data]{}
-
-	// keysToAdd := []int{1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 8, 10, 11, 9}
-	keysToAdd := []int{}
-	randomKeysToAdd := 1000
 
 	treeService.InitService(models.BTreeConfig{
 		MaxElementsPerNode: 2,
 	})
 
-	for _, key := range keysToAdd {
-		treeService.Add(generateElement(key))
-	}
-
-	for i := 0; i < randomKeysToAdd; i++ {
-		treeService.Add(generateElement(rand.Intn(10000)))
-	}
+	addKeys(&treeService)
+	// addKeysRandom(&treeService)
 
 	fmt.Println("service: ", treeService)
+
+	fmt.Println("15: ", treeService.Get(15))
 }
